@@ -266,7 +266,7 @@ SQL::Beautify
 
 	$sql->query($sql_query);
 
-	my $nice_sql = $sql->tidy;
+	my $nice_sql = $sql->beautify;
 
 =head1 DESCRIPTION
 
