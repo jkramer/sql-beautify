@@ -4,7 +4,7 @@ package SQL::Beautify;
 use strict;
 use warnings;
 
-our $VERSION = 0.01;
+our $VERSION = 0.02;
 
 use SQL::Tokenizer;
 use Carp;
@@ -95,8 +95,9 @@ sub beautify {
 			$self->_over;
 		}
 
-		elsif($token =~ /^(?:GROUP)$/i) {
+		elsif($token =~ /^(?:GROUP|ORDER)$/i) {
 			$self->_back;
+			$self->_new_line;
 			$self->_add_token($token);
 		}
 

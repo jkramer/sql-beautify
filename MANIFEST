@@ -1,0 +1,10 @@
+Build.PL
+Changes
+MANIFEST
+README
+lib/SQL/Beautify.pm
+t/pod-coverage.t
+t/pod.t
+t/plain_text.t
+t/html.t
+t/color.t

@@ -1,0 +1,9 @@
+Revision history for SQL-Beautify
+
+0.02	2009-03-29
+		* Fix in documentation.
+		* Line break before ORDER BY and GROUP BY.
+		
+
+0.01    2009-02-22
+        First version, released on an unsuspecting world.
