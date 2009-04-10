@@ -63,7 +63,7 @@ sub beautify {
 			$self->_add_token($token);
 			$self->_new_line;
 			push @{$self->{_level_stack}}, $self->{_level};
-			$self->_over unless $last and $last =~ /^WHERE$/i;
+			$self->_over unless $last and uc($last) eq 'WHERE';
 		}
 
 		elsif($token eq ')') {
@@ -95,7 +95,7 @@ sub beautify {
 			$self->_over;
 		}
 
-		elsif($token =~ /^(?:GROUP|ORDER)$/i) {
+		elsif($token =~ /^(?:GROUP|ORDER|LIMIT)$/i) {
 			$self->_back;
 			$self->_new_line;
 			$self->_add_token($token);
@@ -135,7 +135,7 @@ sub beautify {
 		}
 
 		else {
-			$self->_add_token($token);
+			$self->_add_token($token, $last);
 		}
 
 		$last = $token;
@@ -149,7 +149,7 @@ sub beautify {
 
 # Add a token to the beautified string.
 sub _add_token {
-	my ($self, $token) = @_;
+	my ($self, $token, $last_token) = @_;
 
 	if($self->{wrap}) {
 		my $wrap;
@@ -166,8 +166,12 @@ sub _add_token {
 		}
 	}
 
-	# Don't prepend commas with spaces.
-	$self->{_output} .= $self->_indent if($token ne ',');
+	my $last_is_dot =
+		defined($last_token) && $last_token eq '.';
+
+	if(!$self->_is_punctuation($token) and !$last_is_dot) {
+		$self->{_output} .= $self->_indent;
+	}
 
 	$self->{_output} .= $token;
 
@@ -238,7 +242,7 @@ sub _is_keyword {
 	my @KEYWORD = qw(
 		SELECT WHERE FROM HAVING GROUP BY UNION INTERSECT EXCEPT LEFT RIGHT
 		INNER OUTER CROXX JOIN AND OR VARCHAR INTEGER BIGINT TEXT IS NULL NOT
-		BETWEEN EXTRACT EPOCH INTERVAL IF
+		BETWEEN EXTRACT EPOCH INTERVAL IF LIMIT AS
 	);
 
 	return ~~ grep { $_ eq uc($token) } @KEYWORD;
@@ -249,7 +253,14 @@ sub _is_keyword {
 sub _is_constant {
 	my ($self, $token) = @_;
 
-	return ($token =~ /^\d+$/ or $token =~ /^(['"]).*\1$/);
+	return ($token =~ /^\d+$/ or $token =~ /^(['"`]).*\1$/);
+}
+
+
+sub _is_punctuation {
+	my ($self, $token) = @_;
+
+	return ($token =~ /^[,;.]$/);
 }
 
 
