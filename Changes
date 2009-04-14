@@ -1,5 +1,10 @@
 Revision history for SQL-Beautify
 
+0.04	2009-??-??
+		* Support for adding own keywords.
+		* Support for custom rules
+		* ..?
+
 0.03	2009-04-13
 		* Improved handling of (nested) parenthesis
 		* Name quotation and separation fixes (in SQL::Tokenizer)
