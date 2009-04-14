@@ -10,17 +10,28 @@ use SQL::Tokenizer;
 use Carp;
 
 
+# Some common SQL keywords.
+use constant KEYWORDS => qw(
+	SELECT WHERE FROM HAVING GROUP BY UNION INTERSECT EXCEPT LEFT RIGHT INNER
+	OUTER CROSS JOIN AND OR VARCHAR INTEGER BIGINT TEXT IS NULL NOT BETWEEN
+	EXTRACT EPOCH INTERVAL IF LIMIT AS TINYINT INT CHAR CHARACTER
+);
+
+
 sub new {
 	my ($class, %options) = @_;
 
 	my $self = bless { %options }, $class;
 
 	# Set some defaults.
-	$self->{query}  = ''   unless defined($self->{query});
-	$self->{spaces} = 4    unless defined($self->{spaces});
-	$self->{space}  = ' '  unless defined($self->{space});
-	$self->{break}  = "\n" unless defined($self->{break});
-	$self->{wrap}   = {}   unless defined($self->{wrap});
+	$self->{query}    = ''   unless defined($self->{query});
+	$self->{spaces}   = 4    unless defined($self->{spaces});
+	$self->{space}    = ' '  unless defined($self->{space});
+	$self->{break}    = "\n" unless defined($self->{break});
+	$self->{wrap}     = {}   unless defined($self->{wrap});
+	$self->{keywords} = []   unless defined($self->{keywords});
+
+	push @{$self->{keywords}}, KEYWORDS;
 
 	# Initialize internal stuff.
 	$self->{_level} = 0;
@@ -239,13 +250,17 @@ sub _token {
 sub _is_keyword {
 	my ($self, $token) = @_;
 
-	my @KEYWORD = qw(
-		SELECT WHERE FROM HAVING GROUP BY UNION INTERSECT EXCEPT LEFT RIGHT
-		INNER OUTER CROSS JOIN AND OR VARCHAR INTEGER BIGINT TEXT IS NULL NOT
-		BETWEEN EXTRACT EPOCH INTERVAL IF LIMIT AS
-	);
+	return ~~ grep { $_ eq uc($token) } @{$self->{keywords}};
+}
 
-	return ~~ grep { $_ eq uc($token) } @KEYWORD;
+
+# Add new keywords to highlight.
+sub add_keywords {
+	my $self = shift;
+
+	for my $keyword (@_) {
+		push @{$self->{keywords}}, ref($keyword) ? @{$keyword} : $keyword;
+	}
 }
 
 
@@ -257,6 +272,7 @@ sub _is_constant {
 }
 
 
+# Check if a token is punctuation.
 sub _is_punctuation {
 	my ($self, $token) = @_;
 
@@ -334,6 +350,10 @@ prior calls to B<query> or B<add>.
 =item B<beautify>
 
 Beautifies the internally saved SQL string and returns the result.
+
+=item B<add_keywords>($keyword, $another_keyword, \@more_keywords)
+
+Add any amount of keywords of arrays of keywords to highlight.
 
 =back
 
