@@ -32,6 +32,7 @@ sub new {
 	$self->{wrap}     = {}   unless defined($self->{wrap});
 	$self->{keywords} = []   unless defined($self->{keywords});
 	$self->{rules}    = {}   unless defined($self->{rules});
+	$self->{uc_keywords} = 0 unless defined $self->{uc_keywords};
 
 	push @{$self->{keywords}}, KEYWORDS;
 
@@ -76,7 +77,7 @@ sub beautify {
 
 	while(defined(my $token = $self->_token)) {
 		my $rule = $self->_get_rule($token);
-		
+
 		# Allow custom rules to override defaults.
 		if($rule) {
 			$self->_process_rule($rule, $token);
@@ -196,6 +197,10 @@ sub _add_token {
 		$self->{_output} .= $self->_indent;
 	}
 
+	# uppercase keywords
+	$token = uc $token
+		if $self->_is_keyword($token) and $self->{uc_keywords};
+
 	$self->{_output} .= $token;
 
 	# This can't be the beginning of a new line anymore.
@@ -311,7 +316,7 @@ sub _process_rule {
 		token => sub { $self->_add_token($token)                            },
 		push  => sub { push @{$self->{_level_stack}}, $self->{_level}       },
 		pop   => sub { $self->{_level} = pop(@{$self->{_level_stack}}) || 0 },
-		reset => sub { $self->{_level} = 0; @{$self->{_level_stack}} = ();  }, 
+		reset => sub { $self->{_level} = 0; @{$self->{_level_stack}} = ();  },
 	};
 
 	for(split /-/, lc $rule) {
@@ -391,6 +396,10 @@ one that is placed behind it. For example, use make keywords red using terminal
 color escape sequences.
 
 	{ keywords => [ "\x1B[0;31m", "\x1B[0m" ] }
+
+=item B<uc_keywords> => 1|0
+
+When true (1) all SQL keywords will be uppercased in output.  Default is false (0).
 
 =back
 
