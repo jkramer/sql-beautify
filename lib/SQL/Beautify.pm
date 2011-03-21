@@ -64,6 +64,7 @@ sub new {
 	$self->{keywords} = []   unless defined($self->{keywords});
 	$self->{rules}    = {}   unless defined($self->{rules});
 	$self->{uc_keywords} = 0 unless defined $self->{uc_keywords};
+	$self->{lc_names} = 0    unless defined $self->{lc_names};
 
 	push @{$self->{keywords}}, KEYWORDS;
 
@@ -231,6 +232,10 @@ sub _add_token {
 	# uppercase keywords
 	$token = uc $token
 		if $self->_is_keyword($token) and $self->{uc_keywords};
+
+	# lowercase name	
+	$token = lc $token 
+		if $self->{lc_names} and !$self->_is_keyword( $token ) and	!$self->_is_constant( $token );
 
 	$self->{_output} .= $token;
 
@@ -431,6 +436,11 @@ color escape sequences.
 =item B<uc_keywords> => 1|0
 
 When true (1) all SQL keywords will be uppercased in output.  Default is false (0).
+
+=item B<lc_names> => 1|0
+
+When true (1) all SQL names (ie not keywords or constants) will be lowercased in output.
+Default is false (0).
 
 =back
 
