@@ -3,6 +3,7 @@ Changes
 lib/SQL/Beautify.pm
 MANIFEST
 README
+script/sqlbeautify
 t/add_keywords.t
 t/color.t
 t/custom_rules.t

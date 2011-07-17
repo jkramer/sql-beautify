@@ -13,6 +13,7 @@ my $builder = Module::Build->new(
     },
     add_to_cleanup      => [ 'SQL-Beautify-*' ],
     create_makefile_pl => 'traditional',
+    script_files => ['script/sqlbeautify'],
     meta_merge => {
         resources => {
             repository => 'https://github.com/jkramer/sql-beautify'
