@@ -382,7 +382,7 @@ SQL::Beautify - Beautify SQL statements by adding line breaks indentation
 
 =head1 SYNOPSIS
 
-	my $sql = new SQL::Beautify;
+	my $sql = SQL::Beautify->new;
 
 	$sql->query($sql_query);
 
