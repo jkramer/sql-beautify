@@ -8,32 +8,21 @@ use SQL::Beautify;
 
 my %opt;
 
-usage() if not @ARGV;
 GetOptions(\%opt,
 	'spaces=i',
-	'help',
-) or usage();
-usage() if $opt{help};
-usage() if not @ARGV;
+	'help' => sub { usage(); },
+);
+usage() unless @ARGV || ! -t 0;
+
+my $orig_sql = eval {
+	local $/ = undef;
+	<>;
+};
 
 my $sql = SQL::Beautify->new(%opt);
-
-foreach my $file (@ARGV) {
-	my $original_sql = read_file($file);
-	$sql->query($original_sql);
-	my $nice_sql = $sql->beautify;
-	print $nice_sql;
-}
-
-
-sub read_file {
-	my $file = shift;
-	open my $fh, '<', $file or die;
-	local $/ = undef;
-	my $content = <$fh>;
-	close $fh;
-	return $content;
-}
+$sql->query($orig_sql);
+my $nice_sql = $sql->beautify;
+print $nice_sql;
 
 sub usage {
 	print <<"END_USAGE";
