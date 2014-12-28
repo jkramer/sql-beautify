@@ -4,7 +4,9 @@ package SQL::Beautify;
 use strict;
 use warnings;
 
-our $VERSION = 0.04;
+BEGIN {
+	our $VERSION = 0.04;
+}
 
 use SQL::Tokenizer;
 use Carp;
