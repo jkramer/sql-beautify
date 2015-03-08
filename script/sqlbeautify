@@ -10,7 +10,8 @@ use SQL::Beautify;
 my %opt;
 
 GetOptions(\%opt,
-	'spaces=i',
+	's|spaces=i',
+	'u|uc_keywords' => sub { $opt{uc_keywords} = 1; },
 	'h|help' => sub { pod2usage({ -verbose => 2}); },
 );
 
@@ -47,15 +48,25 @@ indentation. It is based on the SQL::Beautify package.
 
 =item B<help>
 
+  -h
   --help
 
-This help.
+Prints this help.
 
 =item B<spaces>
 
+  -s 4
   --spaces 4
 
 Number of indentation spaces (defaults to 4).
+
+=item B<uc_keywords>
+
+  -u
+  --uc_keywords
+
+When specified all SQL keywords will be uppercased in output. Default is 
+lowercase.
 
 =back
 
