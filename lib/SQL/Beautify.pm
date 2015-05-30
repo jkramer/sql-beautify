@@ -379,7 +379,7 @@ sub _is_punctuation {
 }
 
 
-1
+1;
 
 __END__
 
