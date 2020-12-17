@@ -10,7 +10,7 @@ use SQL::Beautify;
 my %opt;
 
 GetOptions(\%opt,
-	's|spaces=i',
+	's|spaces=i' => sub { $opt{spaces} = $_[1]; },
 	'u|uc_keywords' => sub { $opt{uc_keywords} = 1; },
 	'h|help' => sub { pod2usage({ -verbose => 2}); },
 );
