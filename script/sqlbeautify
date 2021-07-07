@@ -3,16 +3,19 @@ use strict;
 use warnings;
 
 use Getopt::Long qw(GetOptions);
+use Pod::Usage;
 use SQL::Beautify;
 
 
 my %opt;
 
 GetOptions(\%opt,
-	'spaces=i',
-	'help' => sub { usage(); },
+	's|spaces=i' => sub { $opt{spaces} = $_[1]; },
+	'u|uc_keywords' => sub { $opt{uc_keywords} = 1; },
+	'h|help' => sub { pod2usage({ -verbose => 2}); },
 );
-usage() unless @ARGV || ! -t 0;
+
+pod2usage unless @ARGV || ! -t 0;
 
 my $orig_sql = eval {
 	local $/ = undef;
@@ -24,15 +27,52 @@ $sql->query($orig_sql);
 my $nice_sql = $sql->beautify;
 print $nice_sql;
 
-sub usage {
-	print <<"END_USAGE";
-v$SQL::Beautify::VERSION
-Usage: $0 [options] FILEs
 
-      --spaces 4      - number of indentation spaces (defaults to 4)
-      
-      --help          - this help
-END_USAGE
-	exit;
-}
+=head1 NAME
 
+Beautifier of SQL statements by adding line breaks indentation.
+
+=head1 SYNOPSIS
+
+    sqlbeautify --help
+    sqlbeautify [options] FILEs
+
+=head1 DESCRIPTION
+
+The application to beautify SQL statements by adding line breaks 
+indentation. It is based on the SQL::Beautify package. 
+
+=head1 OPTIONS
+
+=over
+
+=item B<help>
+
+  -h
+  --help
+
+Prints this help.
+
+=item B<spaces>
+
+  -s 4
+  --spaces 4
+
+Number of indentation spaces (defaults to 4).
+
+=item B<uc_keywords>
+
+  -u
+  --uc_keywords
+
+When specified all SQL keywords will be uppercased in output. Default is 
+lowercase.
+
+=back
+
+=head1 COPYRIGHT
+
+Copyright (C) 2009 by Jonas Kramer.  Published under the terms of the 
+Artistic License 2.0. 
+
+=cut
