@@ -115,6 +115,11 @@ sub beautify {
 			$self->_process_rule($rule, $token);
 		}
 
+		elsif($token =~ /^--$/i) {
+			$self->_add_token($token);
+			$self->_new_line;
+		}
+
 		elsif($token eq '(') {
 			$self->_add_token($token);
 			$self->_new_line;
@@ -233,8 +238,8 @@ sub _add_token {
 	$token = uc $token
 		if $self->_is_keyword($token) and $self->{uc_keywords};
 
-	# lowercase name	
-	$token = lc $token 
+	# lowercase name
+	$token = lc $token
 		if $self->{lc_names} and !$self->_is_keyword( $token ) and	!$self->_is_constant( $token );
 
 	$self->{_output} .= $token;
